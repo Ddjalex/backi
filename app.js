@@ -1,24 +1,27 @@
-// Simple Node.js server for cPanel
-import express from 'express';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+// Backend server for Temer Properties
+import express from "express";
+import dotenv from "dotenv";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
+dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
-// Serve static files
-app.use(express.static(__dirname));
+// Middleware
+app.use(express.json());
 
-// Handle all routes - serve index.html
-app.get('*', (req, res) => {
-  res.sendFile(join(__dirname, 'index.html'));
+// Health check
+app.get("/health", (req, res) => {
+  res.send("✅ Backend is running");
 });
 
+// Import your routes (adjust paths as needed)
+import authRoutes from "./server/authRoutes.js";      // example
+import propertyRoutes from "./server/propertyRoutes.js"; // example
+
+app.use("/api/auth", authRoutes);
+app.use("/api/properties", propertyRoutes);
+
+// Start server
 app.listen(PORT, () => {
-  console.log(`Temer Properties server running on port ${PORT}`);
+  console.log(`🚀 Temer Properties backend running on port ${PORT}`);
 });
-
-export default app;
